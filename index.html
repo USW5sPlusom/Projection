@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projection | Энциклопедия алгоритмов</title>
+    <style>
+        :root {
+            --bg: #f9f5f0;
+            --surface: #ffffff;
+            --text: #1a1a1a;
+            --text-secondary: #666;
+            --accent: #1a1a1a;
+            --border: rgba(0,0,0,0.08);
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --space-sm: 16px;
+            --space-md: 32px;
+            --space-lg: 64px;
+            --radius: 0px;
+            --font-base: 'Neue Haas Grotesk', -apple-system, sans-serif;
+            --font-mono: 'Fragment Mono', monospace;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --surface: #252525;
+            --text: #f9f5f0;
+            --text-secondary: #999;
+            --accent: #f9f5f0;
+            --border: rgba(255,255,255,0.08);
+            --shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+
+        @font-face {
+            font-family: 'Neue Haas Grotesk';
+            src: url('https://fonts.cdnfonts.com/css/neue-haas-grotesk-display-pro');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-base);
+            line-height: 1.4;
+            color: var(--text);
+            background-color: var(--bg);
+            padding: var(--space-lg) 0;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        ::selection {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, var(--bg) 21px, transparent 1%) center,
+                linear-gradient(var(--bg) 21px, transparent 1%) center,
+                rgba(0,0,0,0.02);
+            background-size: 22px 22px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        [data-theme="dark"] body::before {
+            opacity: 0.1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 500;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            margin-bottom: var(--space-sm);
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 450;
+            margin-bottom: var(--space-md);
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--text);
+        }
+
+        p {
+            font-size: 1.125rem;
+            margin-bottom: var(--space-sm);
+            max-width: 65ch;
+        }
+
+        a {
+            color: var(--text);
+            text-decoration: none;
+            position: relative;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--text);
+            transition: width 0.3s ease;
+        }
+
+        a:hover::after {
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+
+        .features {
+            margin: var(--space-lg) 0;
+        }
+
+        .feature-item {
+            margin-bottom: var(--space-md);
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .tech-stack {
+            margin: var(--space-lg) 0;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .tech-item {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cta {
+            text-align: center;
+            margin: var(--space-lg) 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--text);
+            color: var(--bg);
+            border: 1px solid var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: var(--space-lg);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background: var(--text-secondary);
+            border-radius: 10px;
+            position: fixed;
+            top: var(--space-md);
+            right: var(--space-md);
+            cursor: pointer;
+            border: none;
+            outline: none;
+            z-index: 100;
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--bg);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        [data-theme="dark"] .theme-toggle::after {
+            transform: translateX(20px);
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: var(--space-sm);
+                right: var(--space-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" aria-label="Переключить тему"></button>
+
+    <div class="container">
+        <header class="header">
+            <h1>Projection</h1>
+            <p>Интерактивная энциклопедия алгоритмов и структур данных с визуализациями</p>
+        </header>
+
+        <section class="features">
+            <h2>Особенности</h2>
+            
+            <div class="feature-item">
+                <h3 class="feature-title">Визуализация алгоритмов</h3>
+                <p>Пошаговые анимации, демонстрирующие работу алгоритмов при различных условиях и входных данных.</p>
+            </div>
+            
+            <div class="feature-item">
+                <h3 class="feature-title">Интерактивные примеры</h3>
+                <p>Изменяйте параметры и наблюдайте за поведением алгоритмов в реальном времени.</p>
+            </div>
+            
+            <div class="feature-item">
+                <h3 class="feature-title">Анализ сложности</h3>
+                <p>Подробные объяснения временной и пространственной сложности для каждого алгоритма с практическими примерами.</p>
+            </div>
+            
+            <div class="feature-item">
+                <h3 class="feature-title">Примеры реализации</h3>
+                <p>Примеры кода на Python с лучшими практиками и советами по оптимизации для каждого алгоритма.</p>
+            </div>
+        </section>
+
+        <section class="tech-stack">
+            <h2>Технологии</h2>
+            <div class="tech-grid">
+                <div class="tech-item">Python</div>
+                <div class="tech-item">Flask</div>
+                <div class="tech-item">Matplotlib</div>
+                <div class="tech-item">JavaScript</div>
+                <div class="tech-item">HTML/CSS</div>
+                <div class="tech-item">SQLite</div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <a href="https://github.com/USW5sPlusom/Projection" class="btn">Открыть на GitHub</a>
+        </section>
+
+        <footer class="footer">
+            <p>© 2025 Алексей Моргачёв | Python-разработчик</p>
+        </footer>
+    </div>
+
+    <script>
+        // Переключение темы
+        const themeToggle = document.querySelector('.theme-toggle');
+        const html = document.documentElement;
+        
+        // Проверяем сохранённую тему
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            html.setAttribute('data-theme', savedTheme);
+        }
+        
+        // Переключаем тему
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Плавное появление элементов
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('h1, h2, h3, p, .tech-item, .btn');
+            
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, 100 * index);
+                
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            });
+        });
+    </script>
+</body>
+</html>
