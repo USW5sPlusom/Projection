@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Структуры данных | Projection</title>
+    <style>
+        @font-face {
+            font-family: 'Neue Haas Grotesk';
+            src: url('https://fonts.cdnfonts.com/css/neue-haas-grotesk-display-pro');
+        }
+
+        :root {
+            --bg: #f8f8f8;
+            --surface: #ffffff;
+            --text: #1a1a1a;
+            --text-secondary: #666666;
+            --accent: #1a1a1a;
+            --border: rgba(0,0,0,0.08);
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --space-sm: 16px;
+            --space-md: 32px;
+            --space-lg: 64px;
+            --space-xl: 96px;
+            --radius: 0px;
+            --font-base: 'Neue Haas Grotesk', -apple-system, sans-serif;
+            --font-mono: monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-base);
+            line-height: 1.4;
+            color: var(--text);
+            background-color: var(--bg);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-md);
+        }
+
+        /* Header */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md) 0;
+            margin-bottom: var(--space-lg);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 500;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            text-decoration: none;
+            line-height: 0.9;
+        }
+
+        .nav {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .nav-link {
+            font-size: 1.25rem;
+            font-weight: 450;
+            color: var(--text);
+            text-decoration: none;
+            position: relative;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--text);
+        }
+
+        /* Page Title */
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 500;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            margin-bottom: var(--space-xl);
+        }
+
+        /* Data Structures Grid */
+        .structures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .structure-card {
+            background: var(--surface);
+            padding: var(--space-md);
+            transition: transform 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .structure-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .structure-name {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .structure-meta {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        /* Footer */
+        .main-footer {
+            margin-top: var(--space-xl);
+            padding: var(--space-md) 0;
+            text-align: center;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-md);
+            }
+
+            .nav {
+                width: 100%;
+                justify-content: space-between;
+                margin-top: var(--space-md);
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <a href="/" class="logo">Projection</a>
+            <nav class="nav">
+                <a href="/algorithms" class="nav-link">Алгоритмы</a>
+                <a href="/data-structures" class="nav-link active">Структуры данных</a>
+            </nav>
+        </header>
+
+        <main>
+            <h1 class="page-title">Структуры данных</h1>
+            
+            <!-- Сетка структур данных -->
+            <div class="structures-grid" id="structures-container">
+                <!-- Динамически генерируемые карточки структур данных -->
+                <div class="structure-card">
+                    <h3 class="structure-name">Связный список</h3>
+                    <div class="structure-meta">Линейная структура</div>
+                    <p>Коллекция элементов, где каждый элемент хранит ссылку на следующий</p>
+                </div>
+                
+                <!-- Пример второй карточки -->
+                <div class="structure-card">
+                    <h3 class="structure-name">Двоичная куча</h3>
+                    <div class="structure-meta">Дерево</div>
+                    <p>Дерево, где каждый родитель меньше (или больше) своих потомков</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <p>© 2025 Projection | Энциклопедия алгоритмов</p>
+        </footer>
+    </div>
+
+    <!-- Место для вашего JS -->
+    <script>
+        // Загрузка структур данных будет здесь
+        async function loadDataStructures() {
+            // const response = await fetch('/api/data-structures');
+            // const data = await response.json();
+            // renderDataStructures(data);
+        }
+        
+        function renderDataStructures(structures) {
+            // Генерация карточек структур данных
+        }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDataStructures();
+        });
+    </script>
+</body>
+</html>
